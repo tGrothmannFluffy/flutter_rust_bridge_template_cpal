@@ -5,6 +5,18 @@
 // A plain enum without any fields. This is similar to Dart- or C-style enums.
 // flutter_rust_bridge is capable of generating code for enums with fields
 // (@freezed classes in Dart and tagged unions in C).
+
+#![allow(unused)]
+
+use cpal::{
+    traits::{ DeviceTrait, HostTrait, StreamTrait },
+    Data,
+    FromSample,
+    Sample,
+    SampleFormat,
+    SizedSample,
+};
+
 pub enum Platform {
     Unknown,
     Android,
@@ -56,4 +68,37 @@ pub fn platform() -> Platform {
 // and they are automatically converted to camelCase on the Dart side.
 pub fn rust_release_mode() -> bool {
     cfg!(not(debug_assertions))
+}
+
+pub fn get_audio_device_name() -> String {
+    let host = cpal::default_host();
+    let device = host.default_output_device();
+    match device {
+        Some(device) => device.name().expect("name error"),
+        None => String::from("no name"),
+    }
+}
+
+pub fn start_audio() {
+    let host = cpal::default_host();
+    let device = host.default_input_device().expect("no output device available");
+
+    let mut supported_configs_range = device
+        .supported_input_configs()
+        .expect("error while querying configs");
+    let supported_config = supported_configs_range
+        .next()
+        .expect("no supported config?!")
+        .with_max_sample_rate();
+
+    device.build_input_stream(
+        &supported_config.config(),
+        move |data: &[f32], _: &cpal::InputCallbackInfo| {
+            // react to stream events and read or write stream data here.
+        },
+        move |err| {
+            // react to errors here.
+        },
+        None
+    );
 }

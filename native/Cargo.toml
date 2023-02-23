@@ -9,5 +9,6 @@ edition = "2021"
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
+cpal = "0.15.0"
 anyhow = "1"
 flutter_rust_bridge = "1"

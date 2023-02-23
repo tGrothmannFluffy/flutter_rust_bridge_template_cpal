@@ -11,6 +11,16 @@ pub extern "C" fn wire_rust_release_mode(port_: i64) {
     wire_rust_release_mode_impl(port_)
 }
 
+#[no_mangle]
+pub extern "C" fn wire_get_audio_device_name(port_: i64) {
+    wire_get_audio_device_name_impl(port_)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_start_audio(port_: i64) {
+    wire_start_audio_impl(port_)
+}
+
 // Section: allocate functions
 
 // Section: related functions
